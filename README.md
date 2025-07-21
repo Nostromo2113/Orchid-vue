@@ -73,3 +73,75 @@ app.register('vue', VueController)
 ```bash
 npm run dev
 ```
+
+
+***P.S.***
+Пример глобального импорта Stimulus контроллера в app.js
+
+``
+import './bootstrap';
+import { Application } from '@hotwired/stimulus';
+
+
+// стартуем стимулус
+const application = Application.start();
+
+
+// Регистрируем в Vite
+const modules = import.meta.glob('./controllers/**/*.js', { eager: true });
+
+Object.entries(modules).forEach(([path, module]) => {
+    const name = path
+        .replace('./controllers/', '')
+        .replace(/_/g, '-')
+        .replace(/\.js$/, '')
+        .split('/')
+        .map(part => part.replace(/-controller$/, ''))
+        .join('--');
+
+    application.register(name, module.default);
+});
+``
+Пример Stimulus контроллера с импортом vue библиотек
+``
+import { Controller } from '@hotwired/stimulus'
+import { createApp }  from 'vue'
+
+/* PrimeVue */
+import PrimeVue        from 'primevue/config'
+import Aura from '@primeuix/themes/aura';
+import 'primeicons/primeicons.css'
+import ToastService  from 'primevue/toastservice'
+
+export default class extends Controller {
+    static values = { component: String, props: Object }
+
+    async connect() {
+        const { default: Comp } = await import(`../vue/${this.componentValue}.vue`)
+
+        this.app = createApp(Comp, this.propsValue)
+
+        /* регистрируем PrimeVue и нужные компоненты */
+        this.app.use(PrimeVue, {
+            theme: {
+                preset: Aura,
+                options: {
+                    prefix: 'p',
+                    darkModeSelector: 'light',
+                    cssLayer: false
+                }
+            }
+        })
+        this.app.use(ToastService)
+
+        // Регистрируем нужные компоненты
+        // this.app.component('Button', Button)
+
+        this.app.mount(this.element)
+    }
+
+    disconnect() {
+        this.app?.unmount()
+    }
+}
+``
