@@ -78,7 +78,7 @@ npm run dev
 ***P.S.***
 Пример глобального импорта Stimulus контроллера в app.js
 
-```
+```js
 import './bootstrap';
 import { Application } from '@hotwired/stimulus';
 
@@ -103,7 +103,7 @@ Object.entries(modules).forEach(([path, module]) => {
 });
 ```
 Пример Stimulus контроллера с импортом vue библиотек
-```
+```js
 import { Controller } from '@hotwired/stimulus'
 import { createApp }  from 'vue'
 
