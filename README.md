@@ -134,7 +134,8 @@ export default class extends Controller {
         })
         this.app.use(ToastService)
 
-        // Регистрируем нужные компоненты
+        // Регистрируем нужные компоненты. Лучше для этого сделать отдельный файл, и импортировать сюда
+        // Так же можно делать напрямую в компонентах
         // this.app.component('Button', Button)
 
         this.app.mount(this.element)
